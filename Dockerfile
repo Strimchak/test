@@ -1,8 +1,5 @@
-FROM mongo:latest
-MAINTAINER Strimchak
-
-ENV MONGO_INITBB_ROOT_USERNAME=admin
-ENV MONGO_INITBB_ROOT_PASSWORD=secret
-
-EXPOSE 27017
-
+FROM mcr.microsoft.com/mssql/server:2017-latest
+ 
+        ENV ACCEPT_EULA=Y
+        ENV SA_PASSWORD=StrongP@ssw0rd
+	ENV MSSQL_TCP_PORT=1433 
