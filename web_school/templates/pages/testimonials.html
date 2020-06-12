@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% include "parts/_internal_header.html" %}
+
+<div class="testimonials">
+    <div class="container">
+        <div class="row line">
+            <h2>Ваші відгуки</h2>
+        </div>
+        {% if testimonial_list %}
+        {% for testimonial in testimonial_list %}
+        <div class="testimonials-item">
+            <div class="row">
+                <div class="col-lg-2 col-md-3 col-sm-4 col-2">
+                    <div class="card-img">
+                    {% for student in students %}
+                    {% if student.id == testimonial.student_id %}
+                    {% if student.photo_main %}
+                    <img src="{{student.photo_main.url}}" alt="photo">
+                    {% else %}
+                    <img src="{% static 'img/user.png' %}" alt="photo">
+                    {% endif %}
+                    {% else %}
+                    <img src="{% static 'img/user.png' %}" alt="photo">
+
+                    {% endif %}
+                    
+                    {% endfor %}
+                        
+                    </div>
+                </div>
+                <div class="col-lg col-md col-sm col-9 t_item ">
+                    <p class="course"><span>Курс: </span>{{testimonial.course_id}}</p>
+                    <p class='teacher'><span>Викладач: </span>{{testimonial.teacher_id}}</p>
+                    <p class="testimonial_text_area">
+                    {{testimonial.text_area}}
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class='col-lg-2 col-md-3 col-sm-4 col-4'>
+                    <h3>{{testimonial.author_id}}</h3>
+                </div>
+                <div class="col-lg col-md col-sm col-8">
+                    <div class="data">
+                        <i class="far fa-clock"></i>
+                        <p>{{testimonial.pub_date}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <h2 class=''>No testimonials for now! Maybe later!!!</h2>
+        {% endif %}
+        
+        <div class="row">
+            <div class="col-lg-3.offset-lg-9 pagination pagination">
+                {% if testimonial_list.has_other_pages %}
+                {% if testimonial_list.has_previous %}
+                <a href="?page={{ testimonial_list.previous_page_number }}" class="pagination-item"><i class="fas fa-arrow-left"></i></a>
+                {% else %}
+                <a href="#" class="pagination-item"><i class="fas fa-arrow-left"></i></a>
+                {% endif %}
+                    
+                    {% for numb in testimonial_list.paginator.page_range %}
+                    <a href="?page={{ numb }}" class="pagination-item">{{numb}}</a>
+                    {% endfor %}
+                {% if testimonial_list.has_next %}
+                    <a href="?page={{ testimonial_list.next_page_number }}" class="pagination-item"><i class="fas fa-arrow-right"></i></a>                    
+                    {% else %}
+                    <a href="#" class="pagination-item"><i class="fas fa-arrow-right"></i></a>
+                    {% endif %}
+                {% else %}
+                {% endif %}
+                </div>
+        </div>
+        {% if user.is_authenticated %}
+        {% if user.student %}
+        <div class="row">
+            <div class="about-form">
+                <h3>Залиште свій відгук</h3>
+                <form action="{% url 'pages:testimonials' %}" method="POST">
+                {% csrf_token %}
+                <input type='hidden' name='author_id' value={{user.student.first_name}}&nbsp;{{user.student.last_name}} >
+                <input type='hidden' name='student_id' value={{user.student.id}}>
+                    <p>Курс*</p><br>
+                    <select name='course_id'>
+                        <option>Оберіть курс</option>
+                        {% for course in courses %}
+                        <option>{{course.title}}</option>
+                        {% endfor %}
+                        
+                    </select>
+                    <p>Викладач*</p><br>
+                    <select name='teacher_id'>
+                        <option>Оберіть викладача</option>
+                        {% for teacher in teachers %}
+                        <option>{{teacher.first_name}} {{teacher.last_name}}</option>
+                        
+                        {% endfor %}
+                    </select>
+                    <p>Залиште свій відгук тут</p><br>
+                    <textarea type="text" name="text_area" id="message" placeholder="Ваш відгук"></textarea>
+                    <button type="submit" class="btn--main">Надіслати відгук</button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        {% endif %}
+        
+        {% else %}
+        {% endif %}
+        
+    </div>
+</div> 
+    {% endblock content %}

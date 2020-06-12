@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% include "parts/_internal_header.html" %}
+{% if user.is_superuser %}
+{% include "parts/_sign_in_h1.html" %}
+{% elif user.is_authenticated %}
+
+<div class="container-fluid teacher_profile_1">
+    <div class="container">
+        <div class="row title">
+            <div class="col-md-4">
+                <h2>Кабінет викладача</h2>
+                <a href='{% url "admin:index" %}'>Перейти до Адмін панелі</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container teacher_profile_2">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="personal-info">
+                <div class="photo-box">{% if profile.photo_main %}
+                <img src="{{ profile.photo_main.url }}" alt="photo">
+                {% else %}
+                <img src="{% static 'img/user.png' %}" alt="photo">
+                {% endif %}
+                </div>
+                <h4 class="name">{{profile.first_name}} {{profile.last_name}}</h4>
+                <span>UI/UX Designer</span>
+                <ul class="personal_item">
+                    <li class="personal_item_cont">
+                        <p>{{courses.count}}</p>
+                        <span>курсів</span>
+                    </li>
+                    <li class="personal_item_cont">
+                        <p>{{tasks.count}}</p>
+                        <span>отримано відповідей до завдань</span>
+                    </li>
+                    <li class="personal_item_cont">
+                        <p>{{tasks_checked.count}}</p>
+                        <span>перевірено завдань</span>
+                    </li>
+                </ul>
+                <button class="btn--main edit_button" type="submit"><a href="{% url 'pages:edit_teacher' %}">Редагувати дані</a></button>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div>{% if courses %}
+                <h4>Курси які ви ведете:</h4>
+                <ul>{% for course in courses %}
+                {% if course.avelable == True %}
+                <li class="start_course">Курс: "{{course.title}}"</li>
+                {% else %}
+                <li class="finish_course">Курс: "{{course.title}}"</li>
+                {% endif %}
+                {% endfor %}
+                </ul>
+                {% else %}
+                {% endif %}
+
+            </div>
+            <div>
+                <h4>Email :</h4>
+                <p>{{profile.email}}</p>
+            </div>
+            <div>
+                <h4>Отримані відповіді до завдань:</h4>
+                <table style="width:100%">
+                    <tr>
+                        <th>Курс</th>
+                        <th>Завдання</th>
+                        <th>Відповідь</th>
+                        <th>Виконано</th>
+                        <th>Студент</th>
+                    </tr>
+                    {% if tasks %}
+                    
+                    {% for task in tasks %}
+                    {% if task.checked %}
+                    <tr class="table-success">
+                        <td>{{task.lesson}}</td>
+                        <td>{{task.question}}</td>
+                        <td><a href="http://{{task.answer}}">Перевірити відповідь</a></td>
+                        <td>(Перевірено)</td>
+                        <td><small>{{task.student.last_name}} ({{task.student.email}})</small></td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td>{{task.lesson}}</td>
+                        <td>{{task.question}}</td>
+                        <td><a href="http://{{task.answer}}">Перевірити відповідь</a></td>
+                        <td><a href='{% url "pages:success" task.id %}'>Так</a> / <a href='{% url "pages:wrong" task.id %}'>Ні</a></td>
+                        <td><small>{{task.student.first_name}} {{task.student.last_name}}</small></td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                    {% else %}
+                        <td>Завдань на перевірку не виявлено!</td>
+                    {% endif %}
+                    
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock content %}
