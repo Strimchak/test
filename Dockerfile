@@ -1,5 +1,10 @@
-FROM mcr.microsoft.com/mssql/server:2017-latest
- 
-        ENV ACCEPT_EULA=Y
-        ENV SA_PASSWORD=StrongP@ssw0rd
-	ENV MSSQL_TCP_PORT=1433 
+FROM python:3
+
+ENV PYTHONUNBUFFERED 1
+
+MAINTAINER vasiazozulia
+
+RUN mkdir /webschool_backend
+WORKDIR /webschool_backend
+COPY . /webschool_backend/
+RUN pip install -r req.txt
